@@ -1,0 +1,6 @@
+django
+pandas      <-  pip install pandas
+matplotlib  <-  pip install matplotlib
+seaborn     <-  pip install seaborn
+io
+HttpResponse    <-- from django.http import HttpResponse
