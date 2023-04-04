@@ -1,0 +1,40 @@
+/** style.css **/
+
+/* border: solid 1px black; */
+
+
+/** GLOBAL*/
+
+body
+{ font-family : Verdana, sans-serif; 
+font-size: 14px
+}
+
+
+/** HEADER **/
+
+header
+{ text-align: center
+}
+
+header h3
+{ text-align: center ; 
+color : dark blue; 
+font-family: serif 
+}
+
+#divFormationDjango
+{ text-align: center
+; font-size: 12px
+}
+
+/** Main **/
+
+#mailSection
+{text-align: center
+}
+
+#checkSpan
+{text-align: center
+; color: red
+}
