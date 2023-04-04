@@ -7,3 +7,5 @@ seaborn     <-  pip install seaborn
 BytesIO     <-  from io import BytesIO
 base64      <-  import base64
 HttpResponse    <-- from django.http import HttpResponse
+
+tools       <-  pip install tools

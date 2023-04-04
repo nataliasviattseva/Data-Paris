@@ -16,6 +16,9 @@ import seaborn as sns
 from io import BytesIO
 import base64
 
+from .utils import get_graph
+from .ben import nettoyage_df, creation_df_prix, creation_hist_q2
+
 def home(request):
     
     print("HOME")
@@ -24,6 +27,9 @@ def home(request):
     if request.method == "POST":
         if request.POST.get("Q1") == "Q1":
             print("++++++++ Q1 clicked")
+
+            graph = Question_1()
+            return render(request, 'main/home.html', {"graph":graph})
 
         elif request.POST.get("Q2") == "Q2":
             print("++++++++ Q2 clicked")
@@ -38,12 +44,29 @@ def home(request):
 
     return render(request, "main/home.html")
 
+def Question_1():
+
+    print(f"++++++++++++++ Q1")
+    df_propre = nettoyage_df()
+    
+    print(f"++++++++++++++ Q1 after nettoyage_df()")
+    df_arrondissement = creation_df_prix(df_propre)
+    
+    print(f"++++++++++++++ Q1 after creation_df_prix()")
+    graph = creation_hist_q2(df_arrondissement)
+
+    print(f"++++++++++++++ Q1 after creation_hist_q2()")
+    #graph = get_graph()
+
+    return graph
+
+
 def Question_3():
 
     df = pd.read_csv("/Users/katsuji/Downloads/que-faire-a-paris-.csv", sep=';', header=0)
 
     # drop unnecessary columns from DataFrame
-    # keep only columns in list_to_keep
+    # keep only columns not in list_to_keep
     list_to_keep = ["url", 
                     "lead_text", 
                     "description", 
@@ -247,17 +270,10 @@ def construct_graph_bar(df, condition_1, condition_lt, condition_3):
     #s = buf.getvalue()
     #buf.close()
 
+    # output graph plotted by seaborn/matplotlib as image data
     graph = get_graph()
 
     return graph
     #return render(request, 'main/home.html', {"chart":chart})
 
-def get_graph():
-    buffer = BytesIO()
-    plt.savefig(buffer, format='png')
-    buffer.seek(0)
-    image_png = buffer.getvalue()
-    graph = base64.b64encode(image_png)
-    graph = graph.decode('utf-8')
-    buffer.close()
-    return graph
+
