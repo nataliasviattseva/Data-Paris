@@ -19,6 +19,7 @@ import base64
 from .utils import get_graph
 from .ben import nettoyage_df, creation_df_prix, creation_hist_q2
 
+
 def home(request):
     
     print("HOME")
@@ -62,9 +63,7 @@ def Question_1():
 
 def question2(request):
     # Lecture de fichier csv
-    df = pd.read_csv(
-        r"C:\Users\user\PycharmProjects\Greta-Formation-Python-2023\jeu-de-donnes-que-faire-a-paris\que-faire-a-paris-.csv",
-        sep=';', header=0)
+    df = pd.read_csv("static\data\que-faire-a-paris-.csv", sep=';', header=0)
 
     # Copier df to df_propre pour faire les manipulations
     df_propre = df.copy()
