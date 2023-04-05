@@ -123,7 +123,7 @@ def question2(request):
     barplot_file = "static/images/q2_barplot.png"
     sns_plot.get_figure().savefig(barplot_file)
 
-    return render(request, 'question2.html', {'chart': chart, 'pie_graph_file': pie_graph_file, 'barplot_file': barplot_file})
+    return render(request, 'question2.html', {'pie_graph_file': pie_graph_file, 'barplot_file': barplot_file})
 
 
 def Question_3():
