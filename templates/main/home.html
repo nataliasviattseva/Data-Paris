@@ -1,0 +1,23 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+    <p>
+    <h3>
+        Great78
+    <!--    <form method="post" action="/list/">　 -->
+        <form method="post" action="{% url 'temp' %}">
+        
+            {% csrf_token %}
+            
+            <button type="submit", name="Q1", value="Q1">Q1</button>
+            <button type="submit", name="Q2", value="Q2">Q2</button>
+            <button type="submit", name="Q3", value="Q3">Q3</button>
+
+        </form>
+        {% if graph %}
+            <img src="data:image/png;base64, {{graph|safe}}">
+        {% endif %}
+    </h3>
+    </p>
+   
+{% endblock %}

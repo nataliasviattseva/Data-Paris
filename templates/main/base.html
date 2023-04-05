@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="jp">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>
+            {% block title %}application{% endblock %}
+        </title>
+    </head>
+    <body>
+        <p style="font-family:verdana">
+            <!-- <p style="font-family:fantasy"> -->
+            <dev id="content", name="content">
+                {% block content %}
+                {% endblock %}
+            </dev>
+        </p>
+    <!-- <a href= "http://localhost:8000/">ホームページ</a> -->
+    <a href={% url 'home' %}>start page</a>
+    </body>
+</html>
