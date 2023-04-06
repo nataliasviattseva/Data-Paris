@@ -45,7 +45,7 @@ def home(request):
 
     return render(request, "home.html")
 
-def Question_1():
+def Question_1(request):
 
     print(f"++++++++++++++ Q1")
     df_propre = nettoyage_df()
@@ -59,7 +59,8 @@ def Question_1():
     print(f"++++++++++++++ Q1 after creation_hist_q2()")
     #graph = get_graph()
 
-    return graph
+    #return graph
+    return render(request, 'main/home.html', {"graph":graph})
 
 def question2(request):
     # Lecture de fichier csv
@@ -128,7 +129,7 @@ def question2(request):
                                               'barplot_file': barplot_file})
 
 
-def Question_3():
+def Question_3(request):
 
     df = pd.read_csv("/Users/katsuji/Downloads/que-faire-a-paris-.csv", sep=';', header=0)
 
@@ -201,7 +202,8 @@ def Question_3():
 
     print("++++++++ Q3 ENDING  ++++++++++++++")
     
-    return graph
+    #return graph
+    return render(request, 'main/home.html', {"graph":graph})
 
 def df_cleaning(in_df):
 

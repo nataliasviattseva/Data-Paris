@@ -1,0 +1,31 @@
+source GitHub Main branch at 14:20 Thu 6 April (https://github.com/Ssekli/Data-Paris)
+
+modifications
+    1. urls.py
+        original
+            path("question1", views.Question_1, name="question1"),
+    	    path("question2", views.question2, name="question2"),
+    	    path("question3", views.Question_3, name="question3"),
+        after modifications
+            path("Question1.html", views.Question_1, name="question1"),
+    	    path("Question2.html", views.question2, name="question2"),
+    	    path("Question3.html", views.Question_3, name="question3"),
+
+    2. views.py
+        original
+            def Question_1():
+            def Question_3(): -> Question_3(request):
+        after modifications
+            def Question_1(request):
+            def Question_3(request):
+
+        original
+            return graph
+        after modifications
+            return render(request, 'main/home.html', {"graph":graph})
+
+    3. templates/main/home.html
+        original
+            <form method="post" action="{% url 'temp' %}">
+        after modifications
+            <form method="post" action="{% url 'home' %}">

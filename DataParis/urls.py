@@ -7,8 +7,8 @@ from . import views
 urlpatterns = [
     path("", views.home, name="home"),
     path("home/", views.home, name="home"),
-    path("question1/", views.Question_1, name="question1"),
-    path("question2", views.question2, name="question2"),
-    path("question3/", views.Question_3, name="question3"),
+    path("Question1.html", views.Question_1, name="question1"),
+    path("question2/", views.question2, name="question2"),
+    path("Question3.html", views.Question_3, name="question3"),
 
 ]
