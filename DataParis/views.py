@@ -19,7 +19,6 @@ import base64
 from .utils import get_graph
 from .ben import nettoyage_df, creation_df_prix, creation_hist_q2
 
-
 def home(request):
     
     print("HOME")
@@ -45,7 +44,9 @@ def home(request):
 
     return render(request, "home.html")
 
+
 def Question_1(request):
+
 
     print(f"++++++++++++++ Q1")
     df_propre = nettoyage_df()
@@ -59,8 +60,7 @@ def Question_1(request):
     print(f"++++++++++++++ Q1 after creation_hist_q2()")
     #graph = get_graph()
 
-    #return graph
-    return render(request, 'main/home.html', {"graph":graph})
+    return graph
 
 def question2(request):
     # Lecture de fichier csv
@@ -102,7 +102,9 @@ def question2(request):
             dict[i] = 1
 
     df_tags = pd.DataFrame(list(dict.items()), columns=['evenement', 'occurrences'])
+
     html_df_tags = df_tags.to_html()
+
 
     df_filtered = df_tags[df_tags['occurrences'] > 33]
 
@@ -113,7 +115,9 @@ def question2(request):
     # ax.pie(df_filtered['occurrences'], labels=df_filtered['evenement'], autopct='%1.1f%%')
     # Add a title
     ax.set_title('Pie Chart for Evenements')
+
     pie_graph_file = "static/graph_images/q2_pie.png"
+
     plt.savefig(pie_graph_file)
     plt.close(fig1)
 
@@ -121,6 +125,7 @@ def question2(request):
 
     sns_plot = sns.barplot(x='occurrences', y='evenement', data=df_filtered)
     sns_plot.set_title('Barplot for Evenements')
+
     barplot_file = "static/graph_images/q2_barplot.png"
     sns_plot.get_figure().savefig(barplot_file)
 
@@ -202,7 +207,6 @@ def Question_3(request):
 
     print("++++++++ Q3 ENDING  ++++++++++++++")
     
-    #return graph
     return render(request, 'main/home.html', {"graph":graph})
 
 def df_cleaning(in_df):
