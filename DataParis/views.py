@@ -101,6 +101,7 @@ def question2(request):
             dict[i] = 1
 
     df_tags = pd.DataFrame(list(dict.items()), columns=['evenement', 'occurrences'])
+    html_df_tags = df_tags.to_html()
 
     df_filtered = df_tags[df_tags['occurrences'] > 33]
 
@@ -122,7 +123,9 @@ def question2(request):
     barplot_file = "static/graph_images/q2_barplot.png"
     sns_plot.get_figure().savefig(barplot_file)
 
-    return render(request, 'question2.html', {'pie_graph_file': pie_graph_file, 'barplot_file': barplot_file})
+    return render(request, 'question2.html', {'html_df_tags': html_df_tags,
+                                              'pie_graph_file': pie_graph_file,
+                                              'barplot_file': barplot_file})
 
 
 def Question_3():
