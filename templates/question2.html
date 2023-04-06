@@ -1,0 +1,74 @@
+{% extends 'generic.html' %}
+
+{% load static %}
+
+
+{% block content %}
+
+
+    <div class="container_logo">
+
+        <div class="logo">
+          <img src="Logo_mairie_Paris.png">
+        </div>
+
+
+        <div class="logo">
+          <img src="Logo_GRETA.png">
+        </div>
+
+    </div>
+
+    <div class="nav_button">
+        <a href="Home.html"><button>Home</button></a>
+        <a href="Question1.html"><button>Question 1</button></a>
+        <a href="question2.html"><button>Question 2</button></a>
+        <a href="Question3.html"><button>Question 3</button></a>
+    </div>
+
+    <div class="bandeau_question">
+      <label class="label_bandeau"> Types d'évènements payants et gratuits</label>
+
+    </div>
+
+<table id="efficiency-hub-table" class="table table-bordered dt-responsive nowrap w-100" style="border-collapse: collapse;">
+ <thead>
+  {{html_df_tags | safe}}
+ </thead>
+<!-- <tbody>-->
+<!--   {{html_df_tags | safe}}-->
+<!-- </tbody>-->
+</table>
+
+<!--{{ html_df_tags }}-->
+
+<div>
+<img src="{% static 'graph_images/q2_pie.png' %}" alt="Pie graph">
+<img src="{% static 'graph_images/q2_barplot.png' %}" alt="Barplot graph">
+</div>
+
+    <div class="container2">
+
+      <div class="bloc_graph">
+        <label class="label_graph"> Graphique :</label>
+<!--          <section id="data_section">-->
+            <p class="lead mb-5">Question 2</p>
+<!--            {% if chart %}-->
+                <img src="{% static 'graph_images/q2_pie.png' %}" alt="Pie graph">
+<!--                <img src="graph_images/q2_pie.png" alt="Pie graph">-->
+<!--            {% endif %}-->
+
+<!--        </section>-->
+
+        <hr>
+
+      </div>
+
+      <div class="bloc_graph">
+        <label class="label_graph"> Texte :</label>
+        <hr>
+
+      </div>
+
+    </div>
+{% endblock %}

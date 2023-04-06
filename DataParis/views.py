@@ -44,7 +44,9 @@ def home(request):
 
     return render(request, "home.html")
 
-def Question_1():
+
+def Question_1(request):
+
 
     print(f"++++++++++++++ Q1")
     df_propre = nettoyage_df()
@@ -62,9 +64,7 @@ def Question_1():
 
 def question2(request):
     # Lecture de fichier csv
-    df = pd.read_csv(
-        r"C:\Users\user\PycharmProjects\Greta-Formation-Python-2023\jeu-de-donnes-que-faire-a-paris\que-faire-a-paris-.csv",
-        sep=';', header=0)
+    df = pd.read_csv("static\data\que-faire-a-paris-.csv", sep=';', header=0)
 
     # Copier df to df_propre pour faire les manipulations
     df_propre = df.copy()
@@ -103,6 +103,9 @@ def question2(request):
 
     df_tags = pd.DataFrame(list(dict.items()), columns=['evenement', 'occurrences'])
 
+    html_df_tags = df_tags.to_html()
+
+
     df_filtered = df_tags[df_tags['occurrences'] > 33]
 
     # Create the pie chart
@@ -112,7 +115,9 @@ def question2(request):
     # ax.pie(df_filtered['occurrences'], labels=df_filtered['evenement'], autopct='%1.1f%%')
     # Add a title
     ax.set_title('Pie Chart for Evenements')
-    pie_graph_file = "static/images/q2_pie.png"
+
+    pie_graph_file = "static/graph_images/q2_pie.png"
+
     plt.savefig(pie_graph_file)
     plt.close(fig1)
 
@@ -120,13 +125,16 @@ def question2(request):
 
     sns_plot = sns.barplot(x='occurrences', y='evenement', data=df_filtered)
     sns_plot.set_title('Barplot for Evenements')
-    barplot_file = "static/images/q2_barplot.png"
+
+    barplot_file = "static/graph_images/q2_barplot.png"
     sns_plot.get_figure().savefig(barplot_file)
 
-    return render(request, 'question2.html', {'pie_graph_file': pie_graph_file, 'barplot_file': barplot_file})
+    return render(request, 'question2.html', {'html_df_tags': html_df_tags,
+                                              'pie_graph_file': pie_graph_file,
+                                              'barplot_file': barplot_file})
 
 
-def Question_3():
+def Question_3(request):
 
     df = pd.read_csv("/Users/katsuji/Downloads/que-faire-a-paris-.csv", sep=';', header=0)
 
@@ -199,7 +207,7 @@ def Question_3():
 
     print("++++++++ Q3 ENDING  ++++++++++++++")
     
-    return graph
+    return render(request, 'main/home.html', {"graph":graph})
 
 def df_cleaning(in_df):
 
