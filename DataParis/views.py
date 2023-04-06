@@ -111,7 +111,7 @@ def question2(request):
     # ax.pie(df_filtered['occurrences'], labels=df_filtered['evenement'], autopct='%1.1f%%')
     # Add a title
     ax.set_title('Pie Chart for Evenements')
-    pie_graph_file = "static/images/q2_pie.png"
+    pie_graph_file = "static/graph_images/q2_pie.png"
     plt.savefig(pie_graph_file)
     plt.close(fig1)
 
@@ -119,7 +119,7 @@ def question2(request):
 
     sns_plot = sns.barplot(x='occurrences', y='evenement', data=df_filtered)
     sns_plot.set_title('Barplot for Evenements')
-    barplot_file = "static/images/q2_barplot.png"
+    barplot_file = "static/graph_images/q2_barplot.png"
     sns_plot.get_figure().savefig(barplot_file)
 
     return render(request, 'question2.html', {'pie_graph_file': pie_graph_file, 'barplot_file': barplot_file})
