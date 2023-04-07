@@ -6,30 +6,30 @@ import pandas as pd
 import csv
 import numpy
 import numpy as np
-import matplotlib
+import matplotlib as mpl
 import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 from datetime import datetime
 import pytz
 import seaborn as sns
-#import io
+# import io
 from io import BytesIO
 import base64
 
 from .utils import get_graph
 from .ben import nettoyage_df, creation_df_prix, creation_hist_q2
 
+
 def home(request):
-    
     print("HOME")
     print(f"request.POST={request.POST} request.method={request.method}")
-    
+
     if request.method == "POST":
         if request.POST.get("Q1") == "Q1":
             print("++++++++ Q1 clicked")
 
-            graph = Question_1()
-            return render(request, 'DataParis/home.html', {"graph":graph})
+            # graph = question1()
+            return render(request, 'DataParis/home.html', {"graph": graph})
 
         elif request.POST.get("Q2") == "Q2":
             print("++++++++ Q2 clicked")
@@ -38,29 +38,79 @@ def home(request):
             print("++++++++ Q3 clicked")
 
             graph = Question_3()
-            return render(request, 'DataParis/home.html', {"graph":graph})
+            return render(request, 'DataParis/home.html', {"graph": graph})
         else:
             print("++++++++ invalid button")
 
     return render(request, "home.html")
 
 
-def Question_1(request):
+def question1(request):
+    # lecture de la base
+    df = pd.read_csv("E:/Projet_Data/Data/que-faire-a-paris-.csv", sep=';', header=0)
+    df_propre = df.copy()
 
+    df_propre.isnull().values.any()
 
-    print(f"++++++++++++++ Q1")
-    df_propre = nettoyage_df()
-    
-    print(f"++++++++++++++ Q1 after nettoyage_df()")
-    df_arrondissement = creation_df_prix(df_propre)
-    
-    print(f"++++++++++++++ Q1 after creation_df_prix()")
-    graph = creation_hist_q2(df_arrondissement)
+    # gerer les valeurs vides
+    df_propre.dropna(how='all', inplace=True)
 
-    print(f"++++++++++++++ Q1 after creation_hist_q2()")
-    #graph = get_graph()
+    # supprimer ce qui n'est pas dans Paris
+    indexVille = df_propre[df_propre["address_city"] != "Paris"].index
+    df_propre.drop(indexVille, inplace=True)
 
-    return graph
+    # df_propre.drop(columns = ["url",  ],  inplace = True)
+    df_propre.drop(df_propre.columns.difference(
+        ['id', 'title', 'date_start', 'date_end', 'tags', 'address_name', 'address_street', 'address_zipcode',
+         'lat_lon', 'price_type']), axis=1, inplace=True)
+
+    # creation  de la base pour arrondissement et prix
+    df_price_rip = df_propre["price_type"]
+    df_arr = df_propre["address_zipcode"]
+
+    df_price = df_price_rip.replace("gratuit sous condition", "gratuit")
+    print(df_price.value_counts())
+
+    df_arrondissement = pd.concat([df_price, df_arr], axis=1)
+
+    # filtre pour enlever les valeurs trop peu importantes
+    threshold = 10
+    zip_counts = df_arrondissement["address_zipcode"].value_counts()
+    valid_zips = zip_counts[zip_counts >= threshold].index
+    df_valid = df_arrondissement[df_arrondissement["address_zipcode"].isin(valid_zips)]
+    print(df_valid.value_counts())
+
+    # creation du df pour l'affichage
+    df_show = df_valid.value_counts()
+    df_show = df_show.to_frame()
+    df_show = df_show.sort_values(by=["address_zipcode", "price_type"], ascending=True)
+    df_show = df_show.transpose()
+    df_html = df_show.to_html()
+
+    # parametres du countplot
+    plt.switch_backend('AGG')  # added Katsuji
+
+    mpl.rcParams['axes.labelsize'] = 20
+    mpl.rcParams['xtick.labelsize'] = 12
+    mpl.rcParams['ytick.labelsize'] = 20
+    mpl.rcParams['legend.fontsize'] = 20
+    # plt.figure(figsize=(30,30))
+    plt.figure(figsize=(10, 8))  # modified Katsuji
+
+    # creation du countplot
+    fig = sns.countplot(x="address_zipcode", hue="price_type", data=df_valid,
+                        order=["75001", "75002", "75003", "75004", "75005", "75006", "75007", "75008", "75009", "75010",
+                               "75011", "75012", "75013", "75014", "75015", "75016", "75017", "75018", "75019",
+                               "75020"])
+    # fig.set(title = " Nombre d'évènements gratuits ou payants pas arrondissement ")
+    plt.title(" Nombre d'évènements gratuits ou payants par arrondissement ", fontsize=20)
+    plt.xticks(rotation=45)
+
+    graph = get_graph()
+    # plt.show()
+
+    return render(request, "main/home.html", {"graph": graph, "df_show": df_html})
+
 
 def question2(request):
     # Lecture de fichier csv
@@ -103,9 +153,6 @@ def question2(request):
 
     df_tags = pd.DataFrame(list(dict.items()), columns=['evenement', 'occurrences'])
 
-    html_df_tags = df_tags.to_html()
-
-
     df_filtered = df_tags[df_tags['occurrences'] > 33]
 
     # Create the pie chart
@@ -115,9 +162,7 @@ def question2(request):
     # ax.pie(df_filtered['occurrences'], labels=df_filtered['evenement'], autopct='%1.1f%%')
     # Add a title
     ax.set_title('Pie Chart for Evenements')
-
     pie_graph_file = "static/graph_images/q2_pie.png"
-
     plt.savefig(pie_graph_file)
     plt.close(fig1)
 
@@ -125,99 +170,94 @@ def question2(request):
 
     sns_plot = sns.barplot(x='occurrences', y='evenement', data=df_filtered)
     sns_plot.set_title('Barplot for Evenements')
-
     barplot_file = "static/graph_images/q2_barplot.png"
     sns_plot.get_figure().savefig(barplot_file)
 
-    return render(request, 'question2.html', {'html_df_tags': html_df_tags,
-                                              'pie_graph_file': pie_graph_file,
-                                              'barplot_file': barplot_file})
+    return render(request, 'question2.html', {'pie_graph_file': pie_graph_file, 'barplot_file': barplot_file})
 
 
-def Question_3(request):
-
+def question3():
     df = pd.read_csv("/Users/katsuji/Downloads/que-faire-a-paris-.csv", sep=';', header=0)
 
     # drop unnecessary columns from DataFrame
     # keep only columns not in list_to_keep
-    list_to_keep = ["url", 
-                    "lead_text", 
-                    "description", 
-                    "occurrences", 
-                    "date_description", 
-                    "cover_url", 
-                    "cover_alt", 
-                    "cover_credit", 
-                    "lat_lon", 
-                    "pmr", 
-                    "blind", 
-                    "deaf", 
-                    "transport", 
-                    "contact_url", 
-                    "contact_phone", 
-                    "contact_mail", 
-                    "contact_facebook", 
-                    "contact_twitter", 
-                    "price_detail", 
-                    "access_type", 
-                    "access_link", 
-                    "access_link_text", 
-                    "updated_at", 
-                    "image_couverture", 
-                    "programs", 
-                    "address_url", 
-                    "address_url_text", 
-                    "address_text", 
-                    "title_event", 
-                    "audience", 
-                    "childrens", 
+    list_to_keep = ["url",
+                    "lead_text",
+                    "description",
+                    "occurrences",
+                    "date_description",
+                    "cover_url",
+                    "cover_alt",
+                    "cover_credit",
+                    "lat_lon",
+                    "pmr",
+                    "blind",
+                    "deaf",
+                    "transport",
+                    "contact_url",
+                    "contact_phone",
+                    "contact_mail",
+                    "contact_facebook",
+                    "contact_twitter",
+                    "price_detail",
+                    "access_type",
+                    "access_link",
+                    "access_link_text",
+                    "updated_at",
+                    "image_couverture",
+                    "programs",
+                    "address_url",
+                    "address_url_text",
+                    "address_text",
+                    "title_event",
+                    "audience",
+                    "childrens",
                     "contributor_group"
                     ]
     df_propre = df_cleaning(df)
     df_propr_v2 = df_propre.copy()
-    df_tmp = drop_columns(df_propr_v2, list_to_keep)   
+    df_tmp = drop_columns(df_propr_v2, list_to_keep)
 
-    # convert data type (object -> datetime) and define as 
+    # convert data type (object -> datetime) and define as
     #       date_start(DateTimeFormat)
     #       date_end(DateTimeFormat)
     # then define another columns : saison
 
     df_tmp_2 = convert_to_datetime(df_tmp)
-    
+
     # calculate the duration of event and add it to DataFrame.
     #   column added : "duration(days)"
     df_tmp_3 = calculate_duration(df_tmp_2)
-
 
     # replace all "NaT" (DateTimeFormat) data with "0"
     # dtype will be changed to "object" and cannot calculate anymore but, anytime it is possible to be change it back to
     # DateTime type by to_datatime() and can calculate
     #
-    df_tmp_3.fillna("0", inplace= True)
+    df_tmp_3.fillna("0", inplace=True)
     # df_tmp.isnull().sum()
     df_propre_v2 = df_tmp_3.copy()
 
-    #df_propre_v2.to_csv('./tmp.csv', header=True, index=False)
+    # df_propre_v2.to_csv('./tmp.csv', header=True, index=False)
 
     # Free and non-free events by season
     condition_1 = 'price_type'
     price_type_lt = ['gratuit', 'payant']
-    condition_3 = 'saison' 
+    condition_3 = 'saison'
     graph = construct_graph_bar(df_propre_v2, condition_1, price_type_lt, condition_3)
 
     print("++++++++ Q3 ENDING  ++++++++++++++")
-    
-    return render(request, 'main/home.html', {"graph":graph})
+
+    return graph
+
 
 def df_cleaning(in_df):
-
     out_df = in_df.copy()
 
-    out_df.dropna(how= 'all', inplace= True)
+    out_df.dropna(how='all', inplace=True)
 
     out_df.isnull().values.any()
-    indexVille = out_df[ out_df["address_city"] != "Paris" ].index
-    out_df.drop(indexVille, inplace= True)
+    indexVille = out_df[out_df["address_city"] != "Paris"].index
+    out_df.drop(indexVille, inplace=True)
 
     out_df = out_df.reset_index(drop=True)
 
@@ -225,23 +265,21 @@ def df_cleaning(in_df):
 
 
 def drop_columns(in_df, lt):
-
     in_df.drop(columns=lt, inplace=True)
 
     return in_df
 
 
 def convert_to_datetime(df_in):
-
     sr1 = df_in['date_start']
     sr1 = pd.to_datetime(sr1, errors="coerce")
     sr1 = pd.to_datetime(sr1, utc=True)
-    sr1.name="date_start(DateTimeFormat)"
+    sr1.name = "date_start(DateTimeFormat)"
 
     sr2 = df_in['date_end']
     sr2 = pd.to_datetime(sr2, errors="coerce")
     sr2 = pd.to_datetime(sr2, utc=True)
-    sr2.name="date_end(DateTimeFormat)"
+    sr2.name = "date_end(DateTimeFormat)"
 
     df_out = pd.concat([df_in, sr1, sr2], axis=1)
 
@@ -284,7 +322,6 @@ def convert_to_datetime(df_in):
 
 
 def calculate_duration(df_in):
-
     sr1 = df_in["date_start(DateTimeFormat)"]
 
     sr2 = df_in["date_end(DateTimeFormat)"]
@@ -299,11 +336,9 @@ def calculate_duration(df_in):
 def construct_graph_bar(df, condition_1, condition_lt, condition_3):
     # from https://www.youtube.com/watch?v=jrT6NiM46jk&t=185s
 
-
-    #print(df.columns)
+    # print(df.columns)
     # remove rows with 'saison' value = "None"
     df = df[df['saison'] != "None"]
-
 
     i = 0
     for condition_tmp in condition_lt:
@@ -316,7 +351,7 @@ def construct_graph_bar(df, condition_1, condition_lt, condition_3):
             df_tmp_2 = df_tmp.copy()
             i += 1
         else:
-            df_tmp_2 = pd.concat([df_tmp_2, df_tmp], axis = 0)
+            df_tmp_2 = pd.concat([df_tmp_2, df_tmp], axis=0)
     df_tmp_2 = df_tmp_2.reset_index()
     df_tmp_2 = df_tmp_2.drop(columns='index')
     df_tmp_2 = df_tmp_2.reindex(columns=["type", "saison", "id"])
@@ -332,21 +367,19 @@ def construct_graph_bar(df, condition_1, condition_lt, condition_3):
     sns.barplot(data=df_tmp, x="type", y=new_name, hue="saison", hue_order=["printemps", "ete", "automne", "hiver"])
     title = "Nombre d'évènements par payment type"
     plt.title(title)
-    
+
     plt.legend(loc='upper right')
 
     print("************** ploting ***************")
-    #plt.show()
+    # plt.show()
 
-    #buf = io.BytesIO()
-    #plt.savefig(buf, format='svg', bbox_inches='tight')
-    #s = buf.getvalue()
-    #buf.close()
+    # buf = io.BytesIO()
+    # plt.savefig(buf, format='svg', bbox_inches='tight')
+    # s = buf.getvalue()
+    # buf.close()
 
     # output graph plotted by seaborn/matplotlib as image data
     graph = get_graph()
 
     return graph
-    #return render(request, 'DataParis/home.html', {"chart":chart})
-
-
+    # return render(request, 'DataParis/home.html', {"chart":chart})
