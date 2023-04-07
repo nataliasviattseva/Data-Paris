@@ -38,7 +38,9 @@
       <label class="label_bandeau"> Types d'évènements par saison</label>
       <br>
 
-
+        {% if graph %}
+            <img src="data:image/png;base64, {{graph|safe}}">
+        {% endif %}
 
     </div>
     
