@@ -12,42 +12,15 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 import pytz
 import seaborn as sns
-# import io
+
+
 from io import BytesIO
 import base64
 
-from .utils import get_graph
-from .ben import nettoyage_df, creation_df_prix, creation_hist_q2
 
-
-def home(request):
-    print("HOME")
-    print(f"request.POST={request.POST} request.method={request.method}")
-
-    if request.method == "POST":
-        if request.POST.get("Q1") == "Q1":
-            print("++++++++ Q1 clicked")
-
-            # graph = question1()
-            return render(request, 'DataParis/home.html', {"graph": graph})
-
-        elif request.POST.get("Q2") == "Q2":
-            print("++++++++ Q2 clicked")
-
-        elif request.POST.get("Q3") == "Q3":
-            print("++++++++ Q3 clicked")
-
-            graph = Question_3()
-            return render(request, 'DataParis/home.html', {"graph": graph})
-        else:
-            print("++++++++ invalid button")
-
-    return render(request, "home.html")
-
-
-def question1(request):
+def nettoyage_df():
     # lecture de la base
-    df = pd.read_csv("E:/Projet_Data/Data/que-faire-a-paris-.csv", sep=';', header=0)
+    df = pd.read_csv("static\data\que-faire-a-paris-.csv", sep=';', header=0)
     df_propre = df.copy()
 
     df_propre.isnull().values.any()
@@ -59,10 +32,19 @@ def question1(request):
     indexVille = df_propre[df_propre["address_city"] != "Paris"].index
     df_propre.drop(indexVille, inplace=True)
 
-    # df_propre.drop(columns = ["url",  ],  inplace = True)
-    df_propre.drop(df_propre.columns.difference(
-        ['id', 'title', 'date_start', 'date_end', 'tags', 'address_name', 'address_street', 'address_zipcode',
-         'lat_lon', 'price_type']), axis=1, inplace=True)
+    columns_to_keep = ['id', 'title', 'date_start', 'date_end', 'tags', 'address_name', 'address_street',
+                       'address_zipcode', 'lat_lon', 'price_type']
+    df_propre.drop(df.columns.difference(columns_to_keep), axis=1, inplace=True)
+
+    return df_propre
+
+
+def home(request):
+    return render(request, "home.html")
+
+
+def question1(request):
+    df_propre = nettoyage_df()
 
     # creation  de la base pour arrondissement et prix
     df_price_rip = df_propre["price_type"]
@@ -107,31 +89,12 @@ def question1(request):
     plt.xticks(rotation=45)
 
     graph = get_graph()
-    # plt.show()
 
     return render(request, "main/home.html", {"graph": graph, "df_show": df_html})
 
 
 def question2(request):
-    # Lecture de fichier csv
-    df = pd.read_csv("static\data\que-faire-a-paris-.csv", sep=';', header=0)
-
-    # Copier df to df_propre pour faire les manipulations
-    df_propre = df.copy()
-
-    # Retirer les values manquantes
-    df_propre.dropna(how='all', inplace=True)
-
-    # Verifier si values sont NaN
-    df_propre.isnull().values.any()
-
-    index_ville = df_propre[df_propre["address_city"] != "Paris"].index
-    df_propre.drop(index_ville, inplace=True)
-
-    # Garder les collonnes utiles pour manipulation suivantes
-    columns_to_keep = ['id', 'title', 'date_start', 'date_end', 'tags', 'address_name', 'address_street',
-                       'address_zipcode', 'lat_lon', 'price_type']
-    df_propre.drop(df.columns.difference(columns_to_keep), axis=1, inplace=True)
+    df_propre = nettoyage_df()
 
     # Garder le premier mot sur serie de tags
     df_propre['tags'] = df_propre['tags'].str.split(';').str[0]
@@ -176,54 +139,10 @@ def question2(request):
     return render(request, 'question2.html', {'pie_graph_file': pie_graph_file, 'barplot_file': barplot_file})
 
 
-def question3():
-    df = pd.read_csv("/Users/katsuji/Downloads/que-faire-a-paris-.csv", sep=';', header=0)
+def question3(request):
+    df_propre = nettoyage_df()
 
-    # drop unnecessary columns from DataFrame
-    # keep only columns not in list_to_keep
-    list_to_keep = ["url",
-                    "lead_text",
-                    "description",
-                    "occurrences",
-                    "date_description",
-                    "cover_url",
-                    "cover_alt",
-                    "cover_credit",
-                    "lat_lon",
-                    "pmr",
-                    "blind",
-                    "deaf",
-                    "transport",
-                    "contact_url",
-                    "contact_phone",
-                    "contact_mail",
-                    "contact_facebook",
-                    "contact_twitter",
-                    "price_detail",
-                    "access_type",
-                    "access_link",
-                    "access_link_text",
-                    "updated_at",
-                    "image_couverture",
-                    "programs",
-                    "address_url",
-                    "address_url_text",
-                    "address_text",
-                    "title_event",
-                    "audience",
-                    "childrens",
-                    "contributor_group"
-                    ]
-    df_propre = df_cleaning(df)
-    df_propr_v2 = df_propre.copy()
-    df_tmp = drop_columns(df_propr_v2, list_to_keep)
-
-    # convert data type (object -> datetime) and define as
-    #       date_start(DateTimeFormat)
-    #       date_end(DateTimeFormat)
-    # then define another columns : saison
-
-    df_tmp_2 = convert_to_datetime(df_tmp)
+    df_tmp_2 = convert_to_datetime(df_propre)
 
     # calculate the duration of event and add it to DataFrame.
     #   column added : "duration(days)"
@@ -245,29 +164,7 @@ def question3():
     condition_3 = 'saison'
     graph = construct_graph_bar(df_propre_v2, condition_1, price_type_lt, condition_3)
 
-    print("++++++++ Q3 ENDING  ++++++++++++++")
-
-    return graph
-
-
-def df_cleaning(in_df):
-    out_df = in_df.copy()
-
-    out_df.dropna(how='all', inplace=True)
-
-    out_df.isnull().values.any()
-    indexVille = out_df[out_df["address_city"] != "Paris"].index
-    out_df.drop(indexVille, inplace=True)
-
-    out_df = out_df.reset_index(drop=True)
-
-    return out_df
-
-
-def drop_columns(in_df, lt):
-    in_df.drop(columns=lt, inplace=True)
-
-    return in_df
+    return render(request, 'question3.html', {'graph': graph})
 
 
 def convert_to_datetime(df_in):
@@ -383,3 +280,68 @@ def construct_graph_bar(df, condition_1, condition_lt, condition_3):
 
     return graph
     # return render(request, 'DataParis/home.html', {"chart":chart})
+
+
+# from deleted file utils.py
+def get_graph():
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    image_png = buffer.getvalue()
+    graph = base64.b64encode(image_png)
+    graph = graph.decode('utf-8')
+    buffer.close()
+    return graph
+
+
+# Natalia: functions below from deleted file ben.py, I did'n find where they are called
+def creation_df_prix(df_propre):
+    arrondissement = [75001, 75002, 75003, 75004, 75005, 75006, 75007, 75008, 75009, 75010, 75011, 75012, 75013, 75014,
+                      75015, 75016, 75017, 75018, 75019, 75020]
+
+    df_price_rip = df_propre["price_type"]
+    df_arr = df_propre["address_zipcode"]
+
+    df_price = df_price_rip.replace("gratuit sous condition", "gratuit")
+    print(df_price.value_counts())
+
+    df_arrondissement = pandas.concat([df_price, df_arr], axis=1)
+
+    # df_arrondissement = df_arrondissement.reset_index()
+
+    # print(df_arrondissement.value_counts())
+    return (df_arrondissement)
+
+
+def creation_hist_q2(df_arrondissement):
+    # df_arrondissement.hist(column= "address_zipcode", by = "price_type")
+    # plt.show()
+
+    # sns.countplot(x = "address_zipcode", hue ="price_type", data = df_arrondissement)
+    threshold = 10
+    zip_counts = df_arrondissement["address_zipcode"].value_counts()
+    valid_zips = zip_counts[zip_counts >= threshold].index
+    df_valid = df_arrondissement[df_arrondissement["address_zipcode"].isin(valid_zips)]
+    print(df_valid.value_counts())
+
+    plt.switch_backend('AGG')  # added Katsuji
+
+    mpl.rcParams['axes.labelsize'] = 20
+    mpl.rcParams['xtick.labelsize'] = 20
+    mpl.rcParams['ytick.labelsize'] = 20
+    mpl.rcParams['legend.fontsize'] = 20
+    # plt.figure(figsize=(30,30))
+    plt.figure(figsize=(10, 8))  # modified Katsuji
+
+    fig = sns.countplot(x="address_zipcode", hue="price_type", data=df_valid,
+                        order=["75001", "75002", "75003", "75004", "75005", "75006", "75007", "75008", "75009", "75010",
+                               "75011", "75012", "75013", "75014", "75015", "75016", "75017", "75018", "75019",
+                               "75020"])
+    # fig.set(title = " Nombre d'évènements gratuits ou payants pas arrondissement ")
+    plt.title(" Nombre d'évènements gratuits ou payants par arrondissement ", fontsize=20)
+
+    graph = get_graph()
+    # plt.show()
+
+    return graph
+
