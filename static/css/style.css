@@ -1,6 +1,6 @@
 /* Styles généraux */
 body {
-    background-image: url(background4.jpg);
+    background-image: url("/static/images/background4.jpg");
     background-repeat: no-repeat;
     background-size: cover;
     font-family: Arial, sans-serif;
@@ -30,9 +30,6 @@ h1 {
     border-radius: 1vw;
     box-shadow: 1vw 1vw 1vw rgba(0,0,0,0.3);
     transition: all 0.5s;
-
-
-    
 }
 
 .bloc span {
@@ -53,14 +50,12 @@ h1 {
     box-shadow: 1vw 1vw 1vw rgba(0,0,0,0.3);
     transition: all 0.5s;
     text-align: center;
-
 }
 
 .bandeau_question{
     width: 50vw;
     height: 3vw;
     margin: 1vw auto;
-
     padding: 1vw;
     background-color: #f2f2f2;
     border: black solid 0.1vw;
@@ -69,8 +64,6 @@ h1 {
     transition: all 0.3s;
     text-align: center;
     opacity: 0.8;
-    
-
 }
 
 .label_bandeau{
@@ -86,13 +79,11 @@ h1 {
 .container2{ 
     display: flex;
     justify-content: center;
-    
 }
 
 .nav_button{
     display: block;
     text-align: center;
-    
 }
 
 
@@ -104,7 +95,6 @@ h1 {
     margin: 1vw;
     cursor: pointer;
     font-weight: bold;
-    
 }
 
 .nav_button button:hover{
@@ -129,17 +119,17 @@ h1 {
 
 .button_saison:hover {
     background-color: #9FFFBD;
-  }
+}
   
 .button_saison:focus{
     background-color: #05F254;
     font-size: 0.8vw;
-  }
+}
 
 a {
     text-decoration: none;
     color: black;
-  }
+}
 
 
 .container_logo {
