@@ -20,7 +20,8 @@ import base64
 
 def nettoyage_df():
     # lecture de la base
-    df = pd.read_csv("static\data\que-faire-a-paris-.csv", sep=';', header=0)
+    #df = pd.read_csv("static\data\que-faire-a-paris-.csv", sep=';', header=0)
+    df = pd.read_csv("static/data/que-faire-a-paris-.csv", sep=';', header=0)
     df_propre = df.copy()
 
     df_propre.isnull().values.any()
@@ -164,9 +165,12 @@ def question3(request):
     condition_1 = 'price_type'
     price_type_lt = ['gratuit', 'payant']
     condition_3 = 'saison'
-    graph = construct_graph_bar(df_propre_v2, condition_1, price_type_lt, condition_3)
+    #graph = construct_graph_bar(df_propre_v2, condition_1, price_type_lt, condition_3)
+    graph, df_tmp = construct_graph_bar(df_propre_v2, condition_1, price_type_lt, condition_3)  # correction 17April2023
+    table = construct_table_img(df_tmp) # correction 17April2023
 
-    return render(request, 'question3.html', {'graph': graph})
+    #return render(request, 'question3.html', {'graph': graph})
+    return render(request, 'main/Q3.html', {'graph': graph, 'table': table}) # correction 17April2023
 
 
 def convert_to_datetime(df_in):
@@ -197,10 +201,12 @@ def convert_to_datetime(df_in):
     d4 = datetime.strptime('2023-12-21', '%Y-%m-%d')
     d4_aware = timezone.localize(d4)
 
-    mid = sr1 + (sr2 - sr1)
+    #mid = sr1 + (sr2 - sr1)
+    mid = sr1 + (sr2 - sr1) / 2 # correction 17April2023
 
     saison = []
 
+    '''
     for i in range(df_out.shape[0]):
         if pd.isnull(mid[i]):
             saison.append("None")
@@ -209,6 +215,20 @@ def convert_to_datetime(df_in):
         elif mid[i] >= d2_aware and mid[i] < d3_aware:
             saison.append("ete")
         elif mid[i] >= d3_aware and mid[i] < d4_aware:
+            saison.append("automne")
+        else:
+            saison.append("hiver")
+    '''
+    
+    # correction 17April2023
+    for i in range(df_out.shape[0]):
+        if pd.isnull(mid.iloc[i]):
+            saison.append("None")
+        elif mid.iloc[i] >= d1_aware and mid.iloc[i] < d2_aware:
+            saison.append("printemps")
+        elif mid.iloc[i] >= d2_aware and mid.iloc[i] < d3_aware:
+            saison.append("ete")
+        elif mid.iloc[i] >= d3_aware and mid.iloc[i] < d4_aware:
             saison.append("automne")
         else:
             saison.append("hiver")
@@ -280,8 +300,9 @@ def construct_graph_bar(df, condition_1, condition_lt, condition_3):
     # output graph plotted by seaborn/matplotlib as image data
     graph = get_graph()
 
-    return graph
+    #return graph
     # return render(request, 'DataParis/home.html', {"chart":chart})
+    return graph, df_tmp    # correction 17April2023
 
 
 # from deleted file utils.py
@@ -347,3 +368,45 @@ def creation_hist_q2(df_arrondissement):
 
     return graph
 
+#
+#   added on 17April2023 by Katsuji
+#
+def construct_table_img(df):
+
+    fig, ax = plt.subplots(figsize=(8,3))
+    ax.axis('off')
+    ax.axis('tight')
+    ax.table(cellText=df.values,
+         colLabels=df.columns,
+         colColours =["gold"] * 3,
+         loc='center',
+         bbox=[0,0,1,1])
+    '''
+    buffer = BytesIO()
+    #plt.savefig('table.png')
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    image_png = buffer.getvalue()
+    table = base64.b64encode(image_png)
+    table = table.decode('utf-8')
+    buffer.close()
+    '''
+    table = get_table()
+
+    #table = ""
+
+    return table
+
+#
+#   added on 17April2023 by Katsuji
+#
+def get_table():
+
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    image_png = buffer.getvalue()
+    table = base64.b64encode(image_png)
+    table = table.decode('utf-8')
+    buffer.close()
+    return table
