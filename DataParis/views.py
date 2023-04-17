@@ -122,6 +122,9 @@ def question2(request):
 
     df_filtered = df_tags[df_tags['occurrences'] > 33]
 
+    # close all open figures and set the Matplotlib backend. AGG for png images
+    plt.switch_backend('AGG')
+
     # Create the pie chart
     fig1, ax = plt.subplots()
 
