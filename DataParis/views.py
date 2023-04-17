@@ -43,62 +43,6 @@ def nettoyage_df():
 def home(request):
     return render(request, "home.html")
 
-
-#
-#   this uestion1() was
-#   updated to question1() below by Benjamin 17April2023
-#
-def question1_old(request):
-    df_propre = nettoyage_df()
-
-    # creation  de la base pour arrondissement et prix
-    df_price_rip = df_propre["price_type"]
-    df_arr = df_propre["address_zipcode"]
-
-    df_price = df_price_rip.replace("gratuit sous condition", "gratuit")
-    print(df_price.value_counts())
-
-    df_arrondissement = pd.concat([df_price, df_arr], axis=1)
-
-    # filtre pour enlever les valeurs trop peu importantes
-    threshold = 10
-    zip_counts = df_arrondissement["address_zipcode"].value_counts()
-    valid_zips = zip_counts[zip_counts >= threshold].index
-    df_valid = df_arrondissement[df_arrondissement["address_zipcode"].isin(valid_zips)]
-    print(df_valid.value_counts())
-
-    # creation du df pour l'affichage
-    df_show = df_valid.value_counts()
-    df_show = df_show.to_frame()
-    df_show = df_show.sort_values(by=["address_zipcode", "price_type"], ascending=True)
-    df_show = df_show.transpose()
-    df_html = df_show.to_html()
-
-    # parametres du countplot
-    plt.switch_backend('AGG')  # added Katsuji
-
-    mpl.rcParams['axes.labelsize'] = 20
-    mpl.rcParams['xtick.labelsize'] = 12
-    mpl.rcParams['ytick.labelsize'] = 20
-    mpl.rcParams['legend.fontsize'] = 20
-    # plt.figure(figsize=(30,30))
-    plt.figure(figsize=(10, 8))  # modified Katsuji
-
-    # creation du countplot
-    fig = sns.countplot(x="address_zipcode", hue="price_type", data=df_valid,
-                        order=["75001", "75002", "75003", "75004", "75005", "75006", "75007", "75008", "75009", "75010",
-                               "75011", "75012", "75013", "75014", "75015", "75016", "75017", "75018", "75019",
-                               "75020"])
-    # fig.set(title = " Nombre d'évènements gratuits ou payants pas arrondissement ")
-    plt.title(" Nombre d'évènements gratuits ou payants par arrondissement ", fontsize=20)
-    plt.xticks(rotation=45)
-
-    graph = get_graph()
-
-    return render(request, "question1.html", {"graph": graph, "df_show": df_html})
-
-#-------------------------------------
-
 def question1(request):
     df_propre = nettoyage_df()
 
