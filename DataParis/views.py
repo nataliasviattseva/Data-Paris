@@ -147,7 +147,18 @@ def question2(request):
 def question3(request):
     df_propre = nettoyage_df()
 
+    #--------------------------------------
+    # added on 17April2023 by Katsuji
+    #
+    df_propre = df_propre.reset_index()
+
+    print("------------ df_propre ")
+    print(df_propre.isnull().sum())
+
     df_tmp_2 = convert_to_datetime(df_propre)
+
+    print("------------ df_tmp_2 ")
+    print(df_tmp_2.isnull().sum())
 
     # calculate the duration of event and add it to DataFrame.
     #   column added : "duration(days)"
@@ -280,6 +291,9 @@ def construct_graph_bar(df, condition_1, condition_lt, condition_3):
     #print(f"----------- df ")
     #print(df.groupby('saison').count())
 
+    #
+    #   drop rows with price_type = 'gratuit sous condition'
+    #
     i = 0
     for condition_tmp in condition_lt:
         df_tmp = df[df[condition_1] == condition_tmp]
