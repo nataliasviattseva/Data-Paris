@@ -1,0 +1,3 @@
+Before lauching the application : make sure you have all the requirements 
+pip install -r requirements.txt
+
