@@ -118,6 +118,11 @@ def question2(request):
             dict[i] = 1
 
     df_tags = pd.DataFrame(list(dict.items()), columns=['evenement', 'occurrences'])
+
+    # Retirer les Evenements marqués comme "NaN"
+    # Filter NAN Data Selection column of strings by not (~) operator is used to negate the statement.
+    df_tags = df_tags[~pd.isnull(df_tags['evenement'])]
+
     html_df_tags = df_tags.to_html()
 
     df_filtered = df_tags[df_tags['occurrences'] > 33]
