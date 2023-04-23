@@ -5,7 +5,7 @@ The link to the github Project : https://github.com/Ssekli/Data-Paris/tree/Main
 
 Download the project and unzip it.
 
-Make sure you have atleast python 3.8 installed on your computer : https://www.python.org/downloads/ or if you have it in cmd : pip upgrade python
+Make sure you have atleast python 3.8 installed on your computer : https://www.python.org/downloads/ or if you have it in cmd : python.exe -m pip install --upgrade pip
 
 Before lauching the application : make sure you have all the requirements 
 pip install -r path/requirements.txt
