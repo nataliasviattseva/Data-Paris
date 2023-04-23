@@ -1,3 +1,16 @@
+What to do in Paris Project !
+
+
+The link to the github Project : https://github.com/Ssekli/Data-Paris/tree/Main
+
+Download the project and unzip it.
+
+Make sure you have atleast python 3.8 installed on your computer : https://www.python.org/downloads/ or if you have it in cmd : pip upgrade python
+
 Before lauching the application : make sure you have all the requirements 
-pip install -r requirements.txt
+pip install -r path/requirements.txt
+
+then open the cmd in the directory of the application and type : python manage.py runserver
+
+you can navigate the website on your localhost, by default at the following URL : localhost:8000/
 
