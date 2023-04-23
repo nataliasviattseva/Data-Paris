@@ -62,12 +62,21 @@ def question1(request):
     df_valid = df_arrondissement[df_arrondissement["address_zipcode"].isin(valid_zips)]
     print(df_valid.value_counts())
 
-    # creation du df pour l'affichage
-    df_show = df_valid.value_counts()
-    df_show = df_show.to_frame()
-    df_show = df_show.sort_values(by=["address_zipcode", "price_type"], ascending=True)
-    df_show = df_show.transpose()
-    df_html = df_show.to_html()
+    # creation du df free pour l'affichage
+    df_show_free = df_valid.loc[(df_valid["price_type"] == "gratuit") & (df_valid["address_zipcode"])]
+    df_show_free = df_show_free.value_counts()
+    df_show_free = df_show_free.to_frame()
+    df_show_free = df_show_free.sort_values(by=["address_zipcode", "price_type"], ascending=True)
+    df_show_free = df_show_free.transpose()
+    df_html_free = df_show_free.to_html()
+
+    # creation du df payant pour l'affichage
+    df_show_pay = df_valid.loc[(df_valid["price_type"] == "payant") & (df_valid["address_zipcode"])]
+    df_show_pay = df_show_pay.value_counts()
+    df_show_pay = df_show_pay.to_frame()
+    df_show_pay = df_show_pay.sort_values(by=["address_zipcode", "price_type"], ascending=True)
+    df_show_pay = df_show_pay.transpose()
+    df_html_pay = df_show_pay.to_html()
 
     # parametres du countplot
     plt.switch_backend('AGG')  # added Katsuji
@@ -91,7 +100,7 @@ def question1(request):
     countplot_file = "static/graph_images/q1_countplot.png"
     fig.get_figure().savefig(countplot_file)
 
-    return render(request, "question1.html", {"graph": countplot_file, "df_show": df_html})
+    return render(request, "question1.html", {"graph": countplot_file, "df_show": df_html_free, "df_show1": df_html_pay})
 
 
 #-------------------------------------
