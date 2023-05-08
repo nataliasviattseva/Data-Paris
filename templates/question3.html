@@ -9,17 +9,23 @@
 <!--    {% endif %}-->
 </div>
 
-<img src="data:image/png;base64, {{graph}}", style="display: block; margin: auto;"><br>
-<img src="data:image/png;base64, {{table}}", style="display: block; margin: auto;">
+
 
 <div class="container2">
+
     <div class="bloc_graph">
         <label class="label_graph"> Graphique :</label>
         <hr>
+        <img src="data:image/png;base64, {{graph}}" class="graph_img">
     </div>
-    <div class="bloc_graph" style="opacity: 0.6;">
-        <label class="label_graph"> À définir :</label>
+
+
+    <div class="bloc_graph">
+        <label class="label_graph"> Table :</label>
         <hr>
+        <img src="data:image/png;base64, {{table}}" class="graph_img">
     </div>
+
 </div>
+
 {% endblock %}

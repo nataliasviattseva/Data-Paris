@@ -1,26 +1,38 @@
 {% extends 'generic_questions.html' %}
 {% load static %}
 {% block question_content %}
+
+
 <div class="bandeau_question">
     <label class="label_bandeau"> Types d'évènements payants et gratuits</label>
 </div>
-<table id="efficiency-hub-table" class="table table-bordered dt-responsive nowrap w-100"
-       style="border-collapse: collapse;">
-    <thead>
-    {{html_df_tags | safe}}
-    </thead>
-</table>
-<img src="{% static 'graph_images/q2_pie.png' %}" alt="Pie graph">
-<img src="{% static 'graph_images/q2_barplot.png' %}" alt="Barplot graph">
+
+
 <div class="container2">
+
     <div class="bloc_graph">
-        <label class="label_graph"> Graphique :</label>
-        <p class="lead mb-5">Question 2</p>
+        <label class="label_graph"> Graphique évènements :</label>
         <hr>
+        <img src="{% static 'graph_images/q2_pie.png' %}" alt="Pie graph" class="graph_img">
     </div>
+
+
     <div class="bloc_graph">
         <label class="label_graph"> Texte :</label>
         <hr>
+        <img src="{% static 'graph_images/q2_barplot.png' %}" alt="Barplot graph" class="graph_img">
     </div>
+
 </div>
+
+
+<div style="background-color: aliceblue; width: 18vw; border-radius: 1vw; padding: 1vw; margin: 1vw auto; display: flex; align-items: center; justify-content: center;">
+    <table id="efficiency-hub-table" class="table table-bordered dt-responsive nowrap w-100"
+        style="border-collapse: collapse;">
+        <thead>
+        {{html_df_tags | safe}}
+        </thead>
+    </table>
+</div>
+
 {% endblock %}

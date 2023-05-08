@@ -1,19 +1,36 @@
 {% extends 'generic.html' %}
 {% load static %}
 {% block content %}
+
 <div class="nav_button">
-    <a href="{% url 'home' %}">
-        <button>Accueil</button>
-    </a>
-    <a href="{% url 'question1' %}">
-        <button>Question 1</button>
-    </a>
-    <a href="{% url 'question2' %}">
-        <button>Question 2</button>
-    </a>
-    <a href="{% url 'question3' %}">
-        <button>Question 3</button>
-    </a>
+
+    <div class="nav_button">
+
+        <a href="{% url 'home' %}" class="nav_link{% if request.resolver_match.url_name == 'home' %} active{% endif %}">
+            <button>Accueil</button>
+        </a>
+
+
+        <a href="{% url 'question1' %}" class="nav_link{% if request.resolver_match.url_name == 'question1' %} active{% endif %}">
+            <button>Question 1</button>
+        </a>
+
+        <a href="{% url 'question2' %}" class="nav_link{% if request.resolver_match.url_name == 'question2' %} active{% endif %}">
+            <button>Question 2</button>
+        </a>
+
+
+        <a href="{% url 'question3' %}" class="nav_link{% if request.resolver_match.url_name == 'question3' %} active{% endif %}">
+            <button>Question 3</button>
+        </a>
+
+        
+        <a href="{% url 'map' %}" class="nav_link{% if request.resolver_match.url_name == 'map' %} active{% endif %}">
+            <button>Map</button>
+        </a>
+    </div>
+    
+    
 </div>
 {% block question_content %}
 {% endblock %}

@@ -4,23 +4,40 @@
 <div class="bandeau_question">
     <label class="label_bandeau"> Évènements payants et gratuits par arrondissement</label>
 </div>
+
 <div class="container2">
-    <div class="bloc_graph">
-        <label class="label_graph"> Graphique :</label>
-        <hr>
-    </div>
-    <div class="bloc_graph">
-        <label class="label_graph"> Map :</label>
-        <hr>
-        <img src="{% static 'graph_images/q1_countplot.png' %}" alt="graph"
-    </div>
-    <div>
+
+
+    <div class="bloc_df">
         <table id="efficiency-hub-table" class="table table-bordered dt-responsive nowrap w-100"
-               style="border-collapse: collapse;">
+                style="border-collapse: collapse;">
             <thead>
             {{df_show | safe}}
             </thead>
         </table>
     </div>
+
+
+    <div class="bloc_graph">
+        <label class="label_graph"> Graphique :</label>
+        <hr>
+        <img src="{% static 'graph_images/q1_countplot.png' %}" alt="graph" class="graph_img">
+    </div>
+
+
+
+    <div class="bloc_df">
+        <table id="efficiency-hub-table" class="table table-bordered dt-responsive nowrap w-100"
+                style="border-collapse: collapse;">
+            <thead>
+            {{df_show1 | safe}}
+            </thead>
+        </table>
+    </div>
+
+
 </div>
+
+
+
 {% endblock %}
